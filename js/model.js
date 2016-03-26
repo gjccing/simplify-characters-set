@@ -53,9 +53,9 @@ var model = (function () {
     },
     loadData() {
       return Promise.all([
-          fetch('/UCD/UnicodeData.txt'),
-          fetch('/UCD/Blocks.txt'),
-          fetch('/UCD/Scripts.txt')
+          fetch('./UCD/UnicodeData.txt'),
+          fetch('./UCD/Blocks.txt'),
+          fetch('./UCD/Scripts.txt')
         ])
         .then(function (responses) {
           return Promise.all(responses.map(resp=>resp.text()));
