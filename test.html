@@ -1,0 +1,96 @@
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <style>
+    [v-cloak]{
+      display: none;
+    }
+  </style>
+  <!-- <link rel="stylesheet" href="https://s3-ap-northeast-1.amazonaws.com/codegrid/2015-vue/demo/6/style.css"> -->
+  <!-- <link rel="stylesheet" href="event.css"> -->
+</head>
+<body>
+
+  <div id="app"></div>
+
+
+  <script type="text/javascript" src="node_modules/vue/dist/vue.min.js"></script>
+<script>
+  Vue.config.debug = true;
+  // テンプレ用のパーシャル
+  Vue.partial('temp',
+    '<p>{{name}}</p>' +
+    '<button v-on:click="trigger()">trigger</button>' +
+    '<span>{{message}}</span>');
+  // 子供
+  Vue.component('child', {
+    data: function(){
+      return {name: 'child', message: ''}
+    },
+    events: {
+      'test': function(message){
+        this.message = 'Recieved ' + message;
+        console.log('child',this.message);
+        // return false; // イベントの伝播を止める
+      }
+    },
+    methods: {
+      trigger: function(){
+        this.$dispatch('test', 'dispatch from ' + this.name);
+      }
+    },
+    template:
+    '<partial name="temp"></partial>' +
+    '<grandchild></grandchild>'
+  });
+  // 孫
+  Vue.component('grandchild', {
+    data: function(){
+      return {name: 'grandchild', message: ''}
+    },
+    events: {
+      'test': function(message){
+        this.message = 'Recieved ' + message;
+        console.log('grandchild',this.message);
+      }
+    },
+    methods: {
+      trigger: function(){
+        // 子から親へ
+        this.$dispatch('test', 'dispatch from ' + this.name);
+        // 親へ伝える
+        // this.$root.$emit('test', 'emit form ' + this.name);
+      }
+    },
+    template:
+    '<partial name="temp"></partial>'
+  })
+  var parent = new Vue({
+    data: {name: 'parent', message: ''},
+    el: '#app',
+    events: {
+      'test': function(message){
+        this.message = 'Received ' + message;
+        console.log('parent',this.message);
+      }
+    },
+    methods: {
+      trigger: function(){
+        // 自分は含まない
+        this.$dispatch('test', 'dispatch from ' + this.name);
+        // 親から子へ
+        // this.$broadcast('test', 'broadcast from ' + this.name);
+        // 指定した相手にのみ伝える(thisだと自分にだけ)
+        // this.$emit('test', 'emit from ' + this.name);
+      }
+    },
+    // 親
+    template:
+    '<partial name="temp"></partial>' +
+    '<child></child>'
+  });
+</script>
+</body>
+</html>

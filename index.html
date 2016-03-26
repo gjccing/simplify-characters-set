@@ -8,12 +8,13 @@
     <meta name="description" content="">
     <meta name="author" content="gjccing">
 
-    <title>Regex : Simplify Characters Set</title>
+    <title>Javascript Regex Tool</title>
 
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="node_modules/select2/dist/css/select2.min.css">
     <link rel="stylesheet" href="node_modules/select2-bootstrap-theme/dist/select2-bootstrap.min.css">
     <link href="css/heroic-features.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
@@ -34,110 +35,55 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">Start Bootstrap</a>
+                <a class="navbar-brand" href="#">Javascript Regex Tool</a>
             </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="#">About</a>
-                    </li>
-                    <li>
-                        <a href="#">Services</a>
-                    </li>
-                    <li>
-                        <a href="#">Contact</a>
-                    </li>
-                </ul>
+            <div class="navbar-text navbar-right">
+              <iframe src="https://ghbtns.com/github-btn.html?user=gjccing&repo=simplify-characters-set&type=star" frameborder="0" scrolling="0" width="170px" height="20px"></iframe>
             </div>
-            <!-- /.navbar-collapse -->
         </div>
         <!-- /.container -->
     </nav>
 
     <!-- Page Content -->
-    <div class="container">
-  
+    <div id="app" class="container">
         <!-- Jumbotron Header -->
         <header class="jumbotron hero-spacer">
-            <!-- <h1>A Warm Welcome!</h1> -->
-            <form id="control-panel">
-              <div class="input-group">
-                <input type="text" class="form-control input-lg" placeholder="Search for..." v-model="message">
-                <span class="input-group-btn">
-                  <button class="btn btn-default input-lg" type="button">
-                  	<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                  </button>
-                </span>
+            <h2>Javascript Regex Character Class Reducer</h2>
+            <form id="control-panel" v-on:submit.prevent>
+              <div class="form-group">
+                <label for="pwd">Character Class:</label>
+                <select class="form-control input-lg" v-select2="targets" :options="options" multiple data-placeholder="Select Groups"></select>
               </div>
             </form>
         </header>
 
         <hr>
 
-        <!-- Title -->
-        <!-- <div class="row">
+        <div class="row">
             <div class="col-lg-12">
-                <h3>Latest Features</h3>
+                <h3>Result</h3>
             </div>
-        </div> -->
+            <textarea v-model="result" rows="8" class="form-control input-lg" readonly></textarea>
+        </div>
+
+        <hr>
+
+        <!-- Title -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h3>Options</h3>
+            </div>
+        </div>
         <!-- /.row -->
 
         <!-- Page Features -->
-        <div class="row text-center">
-
-            <!-- <div class="col-md-3 col-sm-6 hero-feature">
-                <div class="thumbnail">
-                    <img src="http://placehold.it/800x500" alt="">
-                    <div class="caption">
-                        <h3>Feature Label</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                        <p>
-                            <a href="#" class="btn btn-primary">Buy Now!</a> <a href="#" class="btn btn-default">More Info</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6 hero-feature">
-                <div class="thumbnail">
-                    <img src="http://placehold.it/800x500" alt="">
-                    <div class="caption">
-                        <h3>Feature Label</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                        <p>
-                            <a href="#" class="btn btn-primary">Buy Now!</a> <a href="#" class="btn btn-default">More Info</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6 hero-feature">
-                <div class="thumbnail">
-                    <img src="http://placehold.it/800x500" alt="">
-                    <div class="caption">
-                        <h3>Feature Label</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                        <p>
-                            <a href="#" class="btn btn-primary">Buy Now!</a> <a href="#" class="btn btn-default">More Info</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3 col-sm-6 hero-feature">
-                <div class="thumbnail">
-                    <img src="http://placehold.it/800x500" alt="">
-                    <div class="caption">
-                        <h3>Feature Label</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
-                        <p>
-                            <a href="#" class="btn btn-primary">Buy Now!</a> <a href="#" class="btn btn-default">More Info</a>
-                        </p>
-                    </div>
-                </div>
-            </div> -->
-
+        <div v-for="optiongrp in options" class="row">
+          <div class="col-lg-12">
+              <h4>{{optiongrp.text}}</h4>
+          </div>
+          <ul class="group">
+            <li v-for="option in optiongrp.children" v-on:click="addVal(option)" class="option text-center" v-bind:class="{select:option.select}">{{option.text}}</li>
+          </ul>
         </div>
         <!-- /.row -->
 
@@ -147,7 +93,7 @@
         <footer>
             <div class="row">
                 <div class="col-lg-12">
-                    <p>Copyright &copy; Your Website 2014</p>
+                    <p>Copyright &copy; gjccing 2014</p>
                 </div>
             </div>
         </footer>
@@ -157,10 +103,10 @@
 
     <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript" src="node_modules/vue/dist/vue.min.js"></script>
-    <script type="text/javascript" src="node_modules/select2/dist/js/select2.min.js"></script>
-    <script type="text/javascript" src="js/tableLoader.js"></script>
+    <script type="text/javascript" src="node_modules/select2/dist/js/select2.js"></script>
     <script type="text/javascript" src="js/model.js"></script>
     <script type="text/javascript" src="js/view.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
 
 </body>
 

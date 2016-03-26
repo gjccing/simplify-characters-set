@@ -1,0 +1,26 @@
+.group{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.option{
+  cursor: pointer;
+  list-style-type:none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px;
+  height: 150px;
+  margin: 5px;
+  padding: 10px;
+  background: #f8f8f8;
+}
+
+.option:hover{
+  background: #ccc;
+}
+
+.option.select{
+  background: #ddd;
+}
