@@ -59,9 +59,9 @@
           if (this.targets) {
             var index = this.targets.indexOf(option.id);
             if (index > -1) {
-              this.targets = this.targets.slice(index, 1);
+              this.targets.splice(index, 1);
             } else {
-              this.targets = this.targets.concat(option.id);
+              this.targets.push(option.id);
             }
           } else {
             this.targets = [option.id];
@@ -71,18 +71,10 @@
       watch: {
         targets: function (newVal, oldVal) {
           newVal = newVal || [];
-          oldVal = oldVal || [];
-          var addVal = newVal.filter(val=>!oldVal.includes(val))
-            .map(val=>val.replace(/.+:/, ''));
-          var delVal = oldVal.filter(val=>!newVal.includes(val))
-            .map(val=>val.replace(/.+:/, ''));
+          newVal = newVal.map(val=>val.replace(/.+:/, ''));
           this.$data.options.forEach(optiongrp=>{
             optiongrp.children.forEach(option=>{
-              if (addVal.includes(option.text)) {
-                option.select = true;
-              } else if (delVal.includes(option.text)) {
-                option.select = false;
-              }
+              option.select = newVal.includes(option.text);
             });
           });
         }
