@@ -15,7 +15,7 @@
       computed: {
         result: function() {
           if ( this.targets ) {
-            return `[${
+            return `/[${
               Array.prototype.concat
                 .apply([], this.targets.map(model.getCodeList))
                 .sort((a,b)=>a-b)
@@ -34,16 +34,21 @@
                     .map(code=>{
                       var hexCode = code.toString(16);
                       if ( hexCode.length == 1 ) {
-                        return '\\x0'+hexCode;
-                      } else if ( code < 32) {
-                        return '\\x'+hexCode;
-                      } else
+                        return '\\u000'+hexCode;
+                      } else if ( hexCode.length == 2 ) {
+                        return '\\u00'+hexCode;
+                      } else if ( hexCode.length == 3 ) {
+                        return '\\u0'+hexCode;
+                      } else if ( hexCode.length == 4 ) {
+                        return '\\u'+hexCode;
+                      } else {
                         return String.fromCharCode(code);
+                      }
                     })
-                    .join((scope[1]-scope[0]>1)?'-':''); // 入遇到 ^ - \ 需要跳脫
+                    .join((scope[1]-scope[0]>1)?'-':'');
                 })
                 .join('')
-            }]`;
+            }]/`;
           } else {
             return '';
           }
@@ -54,16 +59,32 @@
           if (this.targets) {
             var index = this.targets.indexOf(option.id);
             if (index > -1) {
-              this.targets.splice(index, 1);
-              option.select = false;
+              this.targets = this.targets.slice(index, 1);
             } else {
-              this.targets.push(option.id);
-              option.select = true;
+              this.targets = this.targets.concat(option.id);
             }
           } else {
             this.targets = [option.id];
-            option.select = true;
           }
+        }
+      },
+      watch: {
+        targets: function (newVal, oldVal) {
+          newVal = newVal || [];
+          oldVal = oldVal || [];
+          var addVal = newVal.filter(val=>!oldVal.includes(val))
+            .map(val=>val.replace(/.+:/, ''));
+          var delVal = oldVal.filter(val=>!newVal.includes(val))
+            .map(val=>val.replace(/.+:/, ''));
+          this.$data.options.forEach(optiongrp=>{
+            optiongrp.children.forEach(option=>{
+              if (addVal.includes(option.text)) {
+                option.select = true;
+              } else if (delVal.includes(option.text)) {
+                option.select = false;
+              }
+            });
+          });
         }
       }
     });

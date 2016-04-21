@@ -9,7 +9,6 @@ Vue.directive('select2', {
       .on('change', function (e) {
         _this.set(_this.$el.val());
       });
-
   },
   update: function (newValue, oldValue) {
     this.$el.val(null).val(newValue).trigger('change');
